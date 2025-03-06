@@ -14,7 +14,6 @@ import java.util.List;
  * 데이터 관리는 Repository 계층에서 수행하며, 이 클래스는 파일 입출력만 처리합니다.
  *
  * @author 박성용
- * @version 1.2
  * @since 2024-03-06
  */
 public class JsonParser{

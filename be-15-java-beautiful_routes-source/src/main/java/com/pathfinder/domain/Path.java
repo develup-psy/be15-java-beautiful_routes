@@ -8,7 +8,6 @@
  * - 길 정보 출력 (`toString()`)
  *
  * @author 박성용
- * @version 1.0
  * @since 2024-03-06
  */
 package com.pathfinder.domain;

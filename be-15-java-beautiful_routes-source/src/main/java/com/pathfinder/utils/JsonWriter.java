@@ -3,7 +3,6 @@
  * 데이터 저장 책임을 JsonParser와 분리하여 단일 책임 원칙(SRP)을 준수합니다.
  *
  * @author 박성용
- * @version 1.0
  * @since 2024-03-06
  */
 
