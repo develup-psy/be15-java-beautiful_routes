@@ -30,7 +30,7 @@ public class PathRepository {
      * PathRepository 생성자: JSON 데이터를 로드하여 길 리스트를 초기화합니다.
      */
     public PathRepository() {
-        this.paths = JsonParser.parse(filePath);
+        this.paths = JsonParser.parse(filePath, Path.class);
     }
 
     /**
@@ -54,6 +54,7 @@ public class PathRepository {
         if (fromIndex >= paths.size()) {
             return List.of(); // 요청한 페이지가 데이터 범위를 초과한 경우 빈 리스트 반환
         }
+        System.out.println(paths.subList(fromIndex, toIndex));
         return paths.subList(fromIndex, toIndex);
     }
 

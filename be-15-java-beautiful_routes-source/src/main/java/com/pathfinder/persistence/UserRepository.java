@@ -29,7 +29,7 @@ public class UserRepository {
      * UserRepository 생성자: JSON 데이터를 로드하여 사용자 리스트를 초기화합니다.
      */
     public UserRepository() {
-        this.users = JsonParser.parse(filePath);
+        this.users = JsonParser.parse(filePath, User.class);
     }
 
     /**
