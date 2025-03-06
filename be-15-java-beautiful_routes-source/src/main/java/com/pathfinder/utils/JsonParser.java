@@ -29,7 +29,10 @@ public class JsonParser{
     public static <T> List<T> parse(String filePath) {
         try {
             File file = new File(filePath);
-            if (!file.exists() || file.length() == 0) {
+            if (!file.exists()){
+                createEmptyJsonFile(filePath, file);
+                return new ArrayList<>();
+            } else if(file.length() == 0) {
                 return new ArrayList<>(); // 파일이 없거나 비어있으면 빈 리스트 반환
             }
 
@@ -45,5 +48,18 @@ public class JsonParser{
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * JSON 파일이 존재하지 않을 경우, 자동으로 생성하는 메서드입니다.
+     * @param filePath 생성할 JSON 파일 경로
+     */
+    private static void createEmptyJsonFile(String filePath, File file) {
+        try {
+            file.createNewFile();
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, new ArrayList<>()); // 빈 리스트 저장
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
