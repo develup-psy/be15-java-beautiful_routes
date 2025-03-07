@@ -1,3 +1,5 @@
+<div align="center">
+
 ### 🏞️ 당신을 위한 아름다운 길 추천 서비스 🏞️
 
 # GILL 
@@ -241,6 +243,7 @@ public class JsonWriter {
 
 <details>
 <summary><span style="font-size: 18px; font-weight: bold">📌트러블 슈팅 </span></summary>
+</br>
 
 이번 프로젝트를 진행하면서 다양한 문제를 마주했고, 이를 해결하는 과정을 통해 객체지향 설계의 중요성과 SOLID 원칙을 적용하는 실전 경험을 쌓을 수 있었습니다.
 각 문제를 해결하는 과정에서 문제의 원인을 분석하고, 해결 방법을 탐색하며, 논리적인 접근법을 활용하여 개선하는 것을 목표로 했습니다.
