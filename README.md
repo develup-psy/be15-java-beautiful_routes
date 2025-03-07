@@ -7,7 +7,7 @@
 <img src="https://cphoto.asiae.co.kr/listimglink/1/2022040707381119271_1649284690.jpg" />
 
 </div>
-
+</br>
 저는 산책하는 것을 좋아하고, 새로운 예쁜 길을 걷는 경험을 즐깁니다. 하지만 원하는 길을 쉽게 찾을 수 있는 서비스가 부족하다는 점을 느꼈습니다.
 
 
@@ -16,9 +16,9 @@
 
 이 프로젝트는 다양한 길 정보를 제공하고, 사용자가 직접 경험한 길을 공유하며 함께 즐길 수 있는 커뮤니티 기반의 서비스로 발전하는 것을 목표로 하고자 합니다.
 
-
+</br>
 <details>
-<summary style="font-size: 18px; font-weight: bold"> 📌 프로젝트 설계 및 디렉토리 구조</summary>
+<summary><span style="font-size: 18px; font-weight: bold">📌 프로젝트 설계 및 디렉토리 구조</span></summary>
 <div markdown="2">
 
 <h3>디렉토리 구조 (MVC 패턴 + 계층형 아키텍처 적용)</h3>
@@ -71,7 +71,7 @@
 </details>
 </br>
 <details>
-<summary style="font-size: 18px; font-weight: bold">📌 주요 기능 소개</summary>
+<summary><span style="font-size: 18px; font-weight: bold">📌 주요기능 소개</span></summary>
 <div markdown="3">
 
 <h3>1. 페이징된 길 목록 조회</h3>
@@ -119,7 +119,7 @@
 </details>
 </br>
 <details>
-<summary style="font-size: 18px; font-weight: bold">📌설계 과정 (OOP 및 SOLID 원칙 적용)</summary>
+<summary><span style="font-size: 18px; font-weight: bold">📌 설계 과정(OOP 및 SOLID 원칙)</span></summary>
 <div markdown="4">
 
 <h3>1. 객체지향 설계(OOP) 적용</h3>
