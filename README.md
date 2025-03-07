@@ -1,6 +1,6 @@
-<h2 style="text-align: center">당신을 웃음짓게 하는 아름다운 길 추천 서비스 </h2>
-<h1 style="text-align: center">GILL</h1>
-
+<h2 style="text-align: center"><center>당신을 웃음짓게 하는 아름다운 길 추천 서비스</center> </h2>
+<h1 style="text-align: center"><center>GILL</center></h1>
+<img src="https://cphoto.asiae.co.kr/listimglink/1/2022040707381119271_1649284690.jpg" />
 <details>
 <summary style="font-size: 18px; font-weight: bold">프로젝트 개요</summary>
 <div markdown="1">
