@@ -1,5 +1,3 @@
-<div align="center">
-
 ### 🏞️ 당신을 위한 아름다운 길 추천 서비스 🏞️
 
 # GILL 
@@ -143,11 +141,244 @@
 본 프로젝트에서는 SOLID 원칙을 적용하여 유지보수성과 확장성을 높이는 구조를 설계하는 것을 목표로 했습니다. 
 하지만 각 원칙을 적용하는 과정에서 다양한 시행착오가 있었으며, 이를 해결하면서 코드 구조를 개선하는 경험을 하게 되었습니다.
 
+1. 단일 책임 원칙 (SRP) 적용
+- JsonParser는 JSON 데이터 읽기(파싱) 전담
+- JsonWriter는 JSON 데이터 저장 전담
+- PathRepository, UserRepository는 데이터 조회 및 관리 전담
 
+**문제상황**
+- JsonParser가 데이터 저장까지 담당하고 있었음.
+- 초기에는 JsonParser에서 JSON 데이터 읽기와 저장을 동시에 처리하고 있었습니다.
+- 그런데 이렇게 되면, JSON 저장 방식이 변경되면 메서드를 수정해야 하는 문제가 발생하게 되고 유지보수가 좋지 않다는 것을 확인할 수 있었습니다.
+
+SRP 위반코드)
+```java
+public class JsonParser {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static <T> List<T> parse(String filePath, Class<T> clazz) {
+        try {
+            File file = new File(filePath);
+            JsonNode rootNode = objectMapper.readTree(file);
+            return objectMapper.readValue(rootNode.toString(), new TypeReference<List<T>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public static <T> void save(String filePath, List<T> data) { // SRP 위반 (저장 기능 포함)
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filePath), data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**해결 과정**
+- JsonWriter 클래스를 분리하여 저장 책임을 분리
+- JsonParser는 JSON 읽기(파싱)만 담당하도록 유지
+- JsonWriter를 별도로 생성하여 JSON 데이터 저장 역할을 분리
+
+개선된 코드)
+```java
+public class JsonParser {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static <T> List<T> parse(String filePath, Class<T> clazz) {
+        try {
+            File file = new File(filePath);
+            JsonNode rootNode = objectMapper.readTree(file);
+            return objectMapper.readValue(rootNode.toString(), new TypeReference<List<T>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+}
+
+public class JsonWriter {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static <T> void save(String filePath, List<T> data) {
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filePath), data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+결과적으로 책임이 명확해지고 이터 저장 방식이 바뀌어도 JsonParser를 수정할 필요가 없게 되었습니다. 
+이를 통해 유지보수성이 증가하고 확장성이 개선되었습니다. 
+
+<h3>개방-폐쇄 원칙 (OCP) 적용</h3>
+- JsonParser를 제네릭(Generic) 적용하여 특정 JSON 구조에 종속되지 않도록 개선
+- 새로운 데이터가 추가될 때 기존 코드 변경 없이 확장 가능하도록 개선
+
+**문제 상황**
+- JsonParser가 특정 JSON 구조(길 데이터)에 종속적이었음
+- 처음 JsonParser는 routes.json(길 데이터)만 처리할 수 있도록 설계되었는데 users.json을 추가하려고 하니 기존 코드를 수정해야 했고 새로운 JSON 파일이 추가될 때마다 코드 수정이 필요하다는 문제가 발생했습니다.
+
+**해결 과정**
+- JsonParser에서 제네릭을 활용하여 특정 데이터 타입에 종속되지 않도록 변경하였습니다. 
+- parse(String filePath, Class<T> clazz) 형태로 구현하여 파일 경로와 변환할 클래스 타입을 동적으로 지정할 수 있도록 개선하였습니다. 
+
+이를 통해 JsonParser 수정 없이 어떤 JSON 파일(users.json, routes.json 등)도 처리 가능하게 되었고
+새로운 JSON 데이터가 추가되어도 코드 수정이 필요하지 않게 되어 확장에는 열려 있고, 변경에는 닫힌 구조로 개선되었습니다. 
+
+<h3>DIP (의존 역전 원칙) 적용</h3>
+- 현재는 Service 계층이 JsonParser에 직접 의존하고 있는 상황입니다.
+- 이는 데이터 저장 방식이 JSON에서 DB로 변경될 경우 Service 계층도 수정해야 합니다. 
+- 따라서 추후에 Service 계층이 직접 JsonParser를 호출하는 것이 아니라 추상 인테페이스를 구현하여 구체적인 구현이 아닌 추상 인터페이스에 의존하도록 수정하고자 합니다. 
 
 </div>
 </details>
 
 </br>
+
+<details>
+<summary><span style="font-size: 18px; font-weight: bold">📌트러블 슈팅 </span></summary>
+
+이번 프로젝트를 진행하면서 다양한 문제를 마주했고, 이를 해결하는 과정을 통해 객체지향 설계의 중요성과 SOLID 원칙을 적용하는 실전 경험을 쌓을 수 있었습니다.
+각 문제를 해결하는 과정에서 문제의 원인을 분석하고, 해결 방법을 탐색하며, 논리적인 접근법을 활용하여 개선하는 것을 목표로 했습니다.
+
+<h3>1. JSON 데이터 파싱 중 UnrecognizedPropertyException 발생</h3>
+**문제 상황** 
+- JSON 필드가 예기치 않게 추가될 때 오류 발생
+초기에는 JsonParser가 JSON 파일에서 특정 필드만 읽도록 구현되었습니다.
+- 하지만, 공공데이터 API에서 추가적인 필드가 포함된 새로운 JSON 형식이 제공되면서
+예상하지 못한 필드가 존재하면 Jackson 라이브러리가 이를 인식하지 못하고 UnrecognizedPropertyException을 발생시키는 문제가 발생했습니다.
+
+**에러 메시지**:
+> com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException:
+Unrecognized field "길소개" (class com.pathfinder.domain.Path), not marked as ignorable
+
+**문제 원인 분석**
+
+Jackson 라이브러리는 기본적으로 클래스에 정의되지 않은 필드가 포함된 JSON을 역직렬화할 때 오류를 발생시킵니다.
+Path 클래스에 "길소개" 필드가 존재하지 않지만, JSON 파일에는 해당 필드가 포함되어 있어 오류가 발생했습니다.
+
+**해결 방법 탐색**
+
+- Jackson에서는 정의되지 않은 필드를 무시하는 옵션을 제공합니다.
+- @JsonIgnoreProperties(ignoreUnknown = true) 어노테이션을 클래스에 추가하면 정의되지 않은 필드가 있더라도 오류 없이 무시하도록 설정할 수 있습니다.
+
+**적용 코드 (해결 후 코드)**
+```
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true) // 정의되지 않은 필드는 무시
+public class Path {
+private String name;
+private double distance;
+private String duration;
+private String startPoint;
+private String endPoint;
+}
+```
+**해결 결과 및 개선점**
+- 추가적인 필드가 JSON에 존재하더라도 오류가 발생하지 않음
+- 공공데이터의 JSON 형식이 변경되어도 유지보수가 용이해짐
+- 확장성을 고려한 JSON 처리 방식으로 개선
+
+**추가 개선 방향**
+- 현재는 ignoreUnknown = true 설정을 통해 해결했지만, 새로운 필드가 의미 있는 정보라면 이를 반영할 수 있는 구조도 함께 고려해야 함
+
+<h3>2. JSON double 타입 변환 오류 (InvalidFormatException)</h3>
+
+**문제 상황**
+- double로 변환할 수 없는 문자열 포함
+- "총길이" 값이 "11.8+13" 같은 올바르지 않은 숫자 형식으로 저장된 경우, 이를 double 타입으로 변환하려고 하면 InvalidFormatException이 발생하는 문제가 있었습니다.
+
+**에러 메시지**
+> com.fasterxml.jackson.databind.exc.InvalidFormatException:
+Cannot deserialize value of type `double` from String "11.8+13":
+not a valid `double` value
+
+
+**문제 원인 분석**
+- "11.8+13" 같은 데이터는 실제 거리 값이 "11.8km + 13km"라는 의미로 저장된 잘못된 입력값
+Jackson은 이를 double로 변환할 수 없기 때문에 예외가 발생
+
+**해결 방법 탐색**
+
+- 총길이 필드를 String으로 저장한 후, 필요할 때 숫자로 변환하는 방식 적용
+문자열에서 숫자만 추출하는 메서드(getDistanceAsDouble()) 추가
+
+**적용 코드 (해결 후 코드)**
+```
+public class Path {
+@JsonProperty("총길이")
+private String distance; // 문자열로 변경하여 저장
+
+    public double getDistanceAsDouble() {
+        try {
+            return Double.parseDouble(distance.replaceAll("[^0-9.]", "")); // 숫자와 점만 남김
+        } catch (NumberFormatException e) {
+            return 0.0; // 변환 실패 시 기본값 반환
+        }
+    }
+}
+```
+**해결 결과 및 개선점**
+- 잘못된 거리 데이터("11.8+13")도 정상적으로 숫자로 변환 가능
+- 거리 값이 비어 있거나 잘못된 경우 기본값(0.0) 반환하여 예외 방지
+
+**추가 개선 방향**
+- 데이터 입력 시 "11.8+13" 같은 잘못된 형식을 방지하는 사전 검증 로직 추가 필요
+
+<h3>3. LinkedHashMap 변환 오류 (ClassCastException)</h3>
+
+**문제 상황**
+- 제네릭 타입 정보가 런타임에서 손실됨
+- JsonParser에서 데이터를 변환할 때 List<T>를 반환하는 제네릭을 사용했지만,
+런타임에서 Jackson이 정확한 타입 정보를 얻지 못하고 기본적으로 LinkedHashMap을 반환하는 문제 발생
+
+**문제 원인 분석**
+
+- new TypeReference<List<T>>() {} 방식은 런타임에 정확한 타입 정보를 알 수 없음
+- T가 런타임에 구체적인 클래스로 지정되지 않아 Jackson이 기본적으로 LinkedHashMap으로 변환 
+
+**해결 방법 탐색**
+
+- Class<T>를 매개변수로 추가하여 변환할 클래스 타입을 명확하게 지정
+- 제네릭 기반 JSON 변환을 개선하여 올바른 객체로 변환되도록 수정
+
+**적용 코드 (해결 후 코드)**
+```java
+public class JsonParser {
+private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static <T> List<T> parse(String filePath, Class<T> clazz) {
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) return new ArrayList<>();
+
+            JsonNode rootNode = objectMapper.readTree(file);
+            return objectMapper.readValue(rootNode.toString(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+}
+```
+**해결 결과 및 개선점**
+
+- LinkedHashMap 변환 문제 없이 JSON 데이터를 정확하게 객체로 변환 가능
+-  parse("users.json", User.class), parse("routes.json", Path.class) 형태로 올바른 타입 변환 가능
+
+**추가 개선 방향**
+
+- Jackson의 타입 참조(TypeReference<T>)를 활용한 변환 방식도 고려하여 더욱 유연한 설계 가능
+
+<div markdown="5">
+</div>
+</details>
+
 
 
