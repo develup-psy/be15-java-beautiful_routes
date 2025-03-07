@@ -1,24 +1,24 @@
-<h2 style="text-align: center"><center>당신을 웃음짓게 하는 아름다운 길 추천 서비스</center> </h2>
-<h1 style="text-align: center"><center>GILL</center></h1>
+<div align="center">
+
+### 🏞️ 당신을 위한 아름다운 길 추천 서비스 🏞️
+
+# GILL 
+
 <img src="https://cphoto.asiae.co.kr/listimglink/1/2022040707381119271_1649284690.jpg" />
-<details>
-<summary style="font-size: 18px; font-weight: bold">프로젝트 개요</summary>
-<div markdown="1">
+
+</div>
 
 저는 산책하는 것을 좋아하고, 새로운 예쁜 길을 걷는 경험을 즐깁니다. 하지만 원하는 길을 쉽게 찾을 수 있는 서비스가 부족하다는 점을 느꼈습니다.
 
-이에 따라 공공데이터를 활용하여 우리나라의 아름다운 길 정보를 제공하고, 사용자에게 맞는 길을 추천하며, 자신만의 길을 공유할 수 있는 애플리케이션을 만들고자 합니다.
 
-이 프로젝트는 다양한 길 정보를 제공하고, 사용자가 직접 경험한 길을 공유하며 함께 즐길 수 있는 커뮤니티 기반의 서비스로 발전하는 것을 목표로 합니다.
+이에 따라 <a href="https://www.data.go.kr/tcs/dss/selectDataSetList.do">공공데이터</a>
+를 활용하여 우리나라의 아름다운 길 정보를 제공하고, 사용자에게 맞는 길을 추천하며, 자신만의 길을 공유할 수 있는 애플리케이션을 만들고자 합니다.
 
+이 프로젝트는 다양한 길 정보를 제공하고, 사용자가 직접 경험한 길을 공유하며 함께 즐길 수 있는 커뮤니티 기반의 서비스로 발전하는 것을 목표로 하고자 합니다.
 
-</div>
-</details>
-
-</br>
 
 <details>
-<summary style="font-size: 18px; font-weight: bold">프로젝트 설계 및 디렉토리 구조</summary>
+<summary style="font-size: 18px; font-weight: bold"> 📌 프로젝트 설계 및 디렉토리 구조</summary>
 <div markdown="2">
 
 <h3>디렉토리 구조 (MVC 패턴 + 계층형 아키텍처 적용)</h3>
@@ -71,7 +71,7 @@
 </details>
 </br>
 <details>
-<summary style="font-size: 18px; font-weight: bold">주요 기능 소개</summary>
+<summary style="font-size: 18px; font-weight: bold">📌 주요 기능 소개</summary>
 <div markdown="3">
 
 <h3>1. 페이징된 길 목록 조회</h3>
@@ -117,5 +117,37 @@
 
 </div>
 </details>
+</br>
+<details>
+<summary style="font-size: 18px; font-weight: bold">📌설계 과정 (OOP 및 SOLID 원칙 적용)</summary>
+<div markdown="4">
+
+<h3>1. 객체지향 설계(OOP) 적용</h3>
+
+본 프로젝트에서는 객체 지향의 4대 원칙(캡슐화, 상속, 다형성, 추상화)을 적용하여 유지보수성과 확장성을 높이고자 노력했습니다.
+- **캡슐화 (Encapsulation)**
+  - User, Path 객체의 필드를 private으로 선언하고, getter/setter를 통해 데이터 접근을 제어함으로써 불필요한 외부 접근을 차단하였습니다.
+  - 예를 들어, User 클래스에서 비밀번호(password) 필드는 private으로 설정하여 직접 수정할 수 없도록 하고, 비밀번호 검증 메서드를 통해 변경하도록 설계하였습니다.
+- **다형성 (Polymorphism)**
+  - JsonParser는 제네릭(Generic)을 활용하여 다양한 타입의 데이터를 처리할 수 있도록 구현하였습니다.
+    - parse(String filePath, Class<T> clazz) 메서드를 통해 어떤 JSON 데이터든 특정 타입으로 변환 가능하도록 설계되었습니다.
+  - Repository 인터페이스를 사용하지 않고 개별적으로 PathRepository와 UserRepository를 설계하였지만, 향후 인터페이스를 활용한 다형성을 추가적으로 적용할 계획입니다.
+- **상속 (Inheritance)**
+  - 현재 프로젝트에서는 상속을 활용하지 않았지만, 추후 DataRepository<T> 인터페이스를 정의하여 PathRepository, UserRepository가 공통된 기능을 상속받도록 개선할 계획입니다.
+  - 이를 통해 데이터 저장소를 DB로 변경할 경우에도 최소한의 수정으로 확장할 수 있도록 설계할 예정입니다. 
+- **추상화 (Abstraction)**
+  - 추후에 DataRepository<T> 인터페이스를 만들어 PathRepository, UserRepository에서 데이터 저장과 조회의 공통 기능을 추상화할 예정입니다. 
+  - 이는 다른 DB 저장소로 확장할 경우 DBRepository를 새롭게 추가하여 기존 코드 수정 없이 연동 가능하도록 설계하고자 함입니다.
+
+<h3>SOLID 원칙 적용</h3>
+본 프로젝트에서는 SOLID 원칙을 적용하여 유지보수성과 확장성을 높이는 구조를 설계하는 것을 목표로 했습니다. 
+하지만 각 원칙을 적용하는 과정에서 다양한 시행착오가 있었으며, 이를 해결하면서 코드 구조를 개선하는 경험을 하게 되었습니다.
+
+
+
+</div>
+</details>
+
+</br>
 
 
